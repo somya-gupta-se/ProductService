@@ -35,11 +35,11 @@ public class ProductController {
         return service.getProductsByCategory(category);
     }*/
 
-    @GetMapping("/kafka/{data}")
+/*    @GetMapping("/kafka/{data}")
     public String publishProduct(@PathVariable("data") String data){
         service.sendProduct(data);
         return "data published";
-    }
+    }*/
 
 
     @DeleteMapping("/{id}")

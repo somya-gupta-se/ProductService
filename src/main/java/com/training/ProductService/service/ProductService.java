@@ -25,9 +25,9 @@ public class ProductService {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendProduct(String data){
+/*    public void sendProduct(String data){
         kafkaTemplate.send("productTopic", "1", data);
-    }
+    }*/
 
     public Product addProduct(Product product) {
         //product.setAvailable(true);
