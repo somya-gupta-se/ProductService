@@ -2,9 +2,12 @@ package com.training.ProductService.service;
 
 import com.training.ProductService.dto.ProductDTO;
 import com.training.ProductService.entity.Product;
+import com.training.ProductService.exception.ProductNotFoundException;
 import com.training.ProductService.feign.ProductDetailClient;
 import com.training.ProductService.repository.ProductRepository;
 import com.training.ProductService.response.ProductDetailResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -25,12 +28,9 @@ public class ProductService {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-/*    public void sendProduct(String data){
-        kafkaTemplate.send("productTopic", "1", data);
-    }*/
+    Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
     public Product addProduct(Product product) {
-        //product.setAvailable(true);
         return repository.save(product);
     }
 
@@ -40,17 +40,12 @@ public class ProductService {
     }
 
     public ProductDTO getProductById(Long id) {
-        Optional<Product> product = repository.findById(id);
+        Optional<Product> product = Optional.ofNullable(repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found")));
         ProductDetailResponse productDetail= productDetailClient.getProductDetail(id);
         ProductDTO productDetails = new ProductDTO(id,product.get().getName(),productDetail);
-        System.out.println("Product details are : "+productDetails.toString());
+        LOGGER.info("Product details are : {}", productDetails.toString());
         return productDetails;
-    //return repository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
-
-    /*public List<Product> getProductsByCategory(String category) {
-        return repository.findByCategory(category);
-    }*/
 
     public void deleteProduct(Long id) {
         repository.deleteById(id);
