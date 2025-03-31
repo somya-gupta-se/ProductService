@@ -31,6 +31,7 @@ public class ProductService {
     Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
     public Product addProduct(Product product) {
+        LOGGER.info("Product saved with details {}", product);
         return repository.save(product);
     }
 
@@ -43,7 +44,6 @@ public class ProductService {
         Optional<Product> product = Optional.ofNullable(repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found")));
         ProductDetailResponse productDetail= productDetailClient.getProductDetail(id);
         ProductDTO productDetails = new ProductDTO(id,product.get().getName(),productDetail);
-        LOGGER.info("Product details are : {}", productDetails.toString());
         return productDetails;
     }
 
